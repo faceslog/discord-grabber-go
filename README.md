@@ -41,6 +41,7 @@ Then simply compile the `main.go` file !
 ```sh
 go build main.go
 ```
+You should probably obfuscate or pack the executable file to avoid being detected by AVs. 
 
 ### Contributing
 
