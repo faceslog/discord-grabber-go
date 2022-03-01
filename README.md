@@ -39,7 +39,7 @@ const (
 
 Then simply compile the `main.go` file !
 ```sh
-# This command will still keep debug info, and your exe will be detected by AVs 
+# This command will keep debug info in your exe, and it will be detected by AVs 
 # You can avoid this by using specific config flags that I won't provide here ! 
 # with the correct config flags + some obfuscation the score on Virus Total is 0 
 go build main.go
