@@ -25,7 +25,8 @@ resulting from:
 
 ### Usage:
 
-Install Go: https://golang.org/dl
+Create a Discord Webhook (https://support.discord.com/hc/articles/228383668-Intro-to-Webhooks) <br/>
+Install Golang: https://golang.org/dl
 
 Simply change these values in the `main.go` file:
 ```go
