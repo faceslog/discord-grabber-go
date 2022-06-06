@@ -43,6 +43,9 @@ Then simply compile the `main.go` file !
 # You can avoid this by using specific config flags that I won't provide here ! 
 # with the correct config flags + some obfuscation the score on Virus Total is 0 
 go build main.go
+# By default, go build combines symbol and debug info with binary files. 
+# However, you can remove the symbol and debug info with 
+go build -ldflags "-s -w"
 ```
 You should probably obfuscate or pack the executable file to avoid being detected by AVs. 
 
