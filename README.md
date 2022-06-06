@@ -27,7 +27,7 @@ resulting from:
 
 Install Go: https://golang.org/dl
 
-Simply change these variables value the `main.go` file by yours:
+Simply change these values in the `main.go` file:
 ```go
 const (
 	WebhookUrl       = "YOUR_WEBHOOK_URL"
@@ -52,6 +52,6 @@ You can check out: https://github.com/burrowers/garble
 
 ### Contributing
 
-Since it was my first go program there is things that can be refactored for sure, don't hesitate to let me know 
+Since it was my first go program there are things that can be improved for sure, don't hesitate to let me know 
 
 
