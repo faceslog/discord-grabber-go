@@ -1,3 +1,5 @@
+# ⚠ Currently Being Updated for Windows ! Next Release: 10/06/2022
+
 # Discord Token Grabber Written in Go !
 
 ### Liability Disclaimer ⚠
