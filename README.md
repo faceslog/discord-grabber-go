@@ -1,6 +1,6 @@
-# ⚠ Currently Being Updated for Windows ! Next Release: 10/06/2022
-
 # Discord Token Grabber Written in Go !
+
+**For Windows please check out the [main](https://github.com/faceslog/discord-grabber-go/tree/main) branch** 
 
 ### Liability Disclaimer ⚠
 
@@ -52,6 +52,8 @@ go build -ldflags "-s -w"
 ```
 You should probably obfuscate or pack the executable file to avoid being detected by AVs. 
 You can check out: https://github.com/burrowers/garble
+
+You can also add more path to check for a token especially for Mac in the `func getAllTokens()` line ~205
 
 ### Contributing
 
