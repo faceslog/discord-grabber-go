@@ -1,4 +1,3 @@
-// Thanks to https://stackoverflow.com/questions/33516053/windows-encrypted-rdp-passwords-in-golang
 package main
 
 import (
