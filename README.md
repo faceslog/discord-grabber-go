@@ -23,7 +23,6 @@ Simply change these values in the `main.go` file:
 ```go
 const (
 	WebhookUrl       = "YOUR_WEBHOOK_URL"
-	WebhookAvatarUrl = "YOUR_WEBHOOK_IMG" //Webhook img
 	WebhookUsername  = "YOUR_WEBHOOK_NAME" // Webhook name
 	Debug = false // For a console output
 )
