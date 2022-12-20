@@ -30,16 +30,16 @@ const (
 
 Then simply compile the `main.go win.go` files !
 ```sh
-# This command will keep debug info in your exe, and it will be detected by AVs 
-# You can avoid this by using specific config flags that I won't provide here ! 
-# with the correct config flags + some obfuscation the score on Virus Total is 0 
+# This command will keep debug info in your exe
 go build main.go win.go
 # By default, go build combines symbol and debug info with binary files. 
 # However, you can remove the symbol and debug info with 
 go build -ldflags "-s -w" main.go win.go
 ```
-You should probably obfuscate or pack the executable file to avoid being detected by AVs. 
+You should probably obfuscate the executable file to avoid being detected by AVs. 
 You can check out: https://github.com/burrowers/garble or https://upx.github.io/
+
+I won't provide help on how to bypass AVs as it's not the purpose of this project.
 
 ### Contributing
 
